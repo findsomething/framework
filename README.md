@@ -12,4 +12,4 @@ see the demo for detail
 
 ab -n 10000 -c 500 http://127.0.0.1:9501/
 
-![normal](framework/doc/pics/94EAE332-44BF-4909-99E1-A1227937C745.png)
+![normal](https://github.com/findsomething/framework/blob/master/doc/pics/94EAE332-44BF-4909-99E1-A1227937C745.png)
