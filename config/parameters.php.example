@@ -1,0 +1,12 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: lihan
+ * Date: 17/1/1
+ * Time: 14:51
+ */
+return [
+    'log_path' => dirname(__DIR__)."/var/logs/",
+    'namespace' => 'FSth\\Framework\\Test\\',
+    'route_file' => dirname(__DIR__) . '/config/route.php',
+];

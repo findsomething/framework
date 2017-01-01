@@ -1,2 +1,5 @@
-# framework
-a framework combine swoole and phalcon
+# a frame work combine swoole + phalcon
+
+## usage
+   
+php bin/server start config/server.php 

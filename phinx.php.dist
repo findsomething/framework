@@ -1,0 +1,40 @@
+<?php
+
+$phinx = [
+    'paths' => [
+        'migrations' => 'database'
+    ],
+    'environments' => [
+        'default_migration_table' => 'migrations_resource',
+        'default_database' => 'default',
+    ]
+];
+
+$config = include __DIR__ . '/config/parameters.php';
+$db = $config['database'];
+
+$phinx['environments']['default'] = [
+    'adapter' => 'mysql',
+    'host' => $db['host'],
+    'name' => $db['name'],
+    'user' => $db['user'],
+    'pass' => $db['password'],
+    'port' => $db['port'],
+    'charset' => $db['charset']
+];
+
+if (file_exists(__DIR__ . '/config/parameters-testing.php')) {
+    $config = include __DIR__ . '/config/parameters-testing.php';
+    $db = $config['database'];
+    $phinx['environments']['testing'] = [
+        'adapter' => 'mysql',
+        'host' => $db['host'],
+        'name' => $db['name'],
+        'user' => $db['user'],
+        'pass' => $db['password'],
+        'port' => $db['port'],
+        'charset' => $db['charset']
+    ];
+}
+
+return $phinx;

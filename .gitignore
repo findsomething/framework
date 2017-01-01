@@ -1,0 +1,17 @@
+/vendor/
+/bin/*
+/config/parameters.php
+/config/server.php
+/var/cache/*
+/var/logs/*
+/var/tmp/*
+/var/run/*
+/phpunit.xml
+/phinx.php
+!/bin/console
+!/bin/server
+!/config/.gitkeep
+!/var/run/.gitkeep
+!/var/cache/.gitkeep
+!/var/logs/.gitkeep
+!/var/tmp/.gitkeep

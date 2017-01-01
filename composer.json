@@ -1,0 +1,29 @@
+{
+  "name": "fsth/framework",
+  "description": "a framework base swoole and phalcon",
+  "autoload": {
+    "psr-4": {
+      "FSth\\Framework\\": "src",
+      "FSth\\Framework\\Test\\": "tests"
+    }
+  },
+  "authors": [
+    {
+      "name": "qiqisan",
+      "email": "qiqisan1@126.com"
+    }
+  ],
+  "require": {
+    "ext-phalcon": "~3.0.1",
+    "monolog/monolog": ">=1.22.0",
+    "pimple/pimple": ">=3.0.2",
+    "robmorgan/phinx": ">=0.6.5",
+    "doctrine/dbal": ">=2.5.5",
+    "fsth/redis-client": ">=0.1.2",
+    "codeages/plumber": ">=0.5.3",
+    "codeages/beanstalk-client": ">=0.1.3"
+  },
+  "config": {
+    "bin-dir": "bin"
+  }
+}
