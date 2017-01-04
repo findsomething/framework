@@ -35,18 +35,24 @@ class ParseRaw
 
     public function parse()
     {
-        $this->func = strtolower($this->method);
-        if (!in_array($this->func, array_keys($this->supportMethods)) && !$this->judgeFormData()) {
+        if (!$this->setFunc()) {
             return array();
         }
         return call_user_func_array(array($this, $this->supportMethods[$this->func]), array());
     }
 
-    protected function judgeFormData()
+    protected function setFunc()
     {
-        if (strpos($this->func, self::FORM_DATA) >= 0) {
-            $this->func = self::FORM_DATA;
+        $keys = array_keys($this->supportMethods);
+        $this->func = strtolower($this->method);
+        if (in_array($this->func, array_keys($this->supportMethods))) {
             return true;
+        }
+        foreach ($keys as $key) {
+            if (strpos($this->func, $key) !== false) {
+                $this->func = $key;
+                return true;
+            }
         }
         return false;
     }
@@ -88,7 +94,7 @@ class ParseRaw
 
             preg_match('/name=".*"[\r|\n]*.*/s', $block, $matches);
             $parse = preg_split('/"/s', $matches[0]);
-            if(count($parse) != 3){
+            if (count($parse) != 3) {
                 continue;
             }
             $result[trim($parse[1])] = trim($parse[2]);
