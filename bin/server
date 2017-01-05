@@ -59,11 +59,11 @@ class HttpServer
         $kernel = include $this->config['bootstrap'];
         $kernel->setConfig('server', $this->config);
 
-        $protocol = new \QiQiuYun\Barrage\Server\Protocol($kernel);
+        $protocol = new \FSth\Framework\Server\Protocol($kernel);
 
         $serverConfig = $kernel->config('server');
 
-        $server = new \QiQiuYun\Barrage\Core\Server\HttpServer($serverConfig['host'], $serverConfig['port']);
+        $server = new \FSth\Framework\Server\HttpServer($serverConfig['host'], $serverConfig['port']);
         $server->setKernel($kernel);
         $server->setProtocol($protocol);
         $server->setLogger($kernel['logger']);
