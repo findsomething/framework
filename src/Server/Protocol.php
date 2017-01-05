@@ -68,10 +68,16 @@ class Protocol
 
         $_GET = $_POST = $_COOKIE = $_SERVER = array();
         $this->handle->setHeader(array());
+        $this->handle->setRaw("");
+
+        $_SERVER = $req->server;
+
         if ($req->server['request_method'] == 'POST') {
             $parseRaw = new ParseRaw($req->header['content-type'], $req->rawContent());
             $_POST = $parseRaw->parse();
         }
+
+        $this->handle->setRaw($req->rawContent());
 
         if (!empty($req->get)) {
             $_GET = $req->get;
@@ -80,8 +86,6 @@ class Protocol
         if (!empty($req->header)) {
             $this->handle->setHeader($req->header);
         }
-
-        $this->handle->setRaw($req->rawContent());
 
         $_GET['_url'] = $_SERVER['REQUEST_URI'] = $req->server['request_uri'];
         $_SERVER['REQUEST_METHOD'] = $req->server['request_method'];
