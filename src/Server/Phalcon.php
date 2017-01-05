@@ -26,6 +26,7 @@ class Phalcon
     protected $di;
     protected $server;
     protected $header = array();
+    protected $raw = "";
 
     public function __construct($kernel)
     {
@@ -51,6 +52,11 @@ class Phalcon
     public function setHeader($header)
     {
         $this->header = $header;
+    }
+
+    public function setRaw($raw)
+    {
+        $this->raw = $raw;
     }
 
     public function handle()

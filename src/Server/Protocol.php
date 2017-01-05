@@ -81,6 +81,8 @@ class Protocol
             $this->handle->setHeader($req->header);
         }
 
+        $this->handle->setRaw($req->rawContent());
+
         $_GET['_url'] = $_SERVER['REQUEST_URI'] = $req->server['request_uri'];
         $_SERVER['REQUEST_METHOD'] = $req->server['request_method'];
         
