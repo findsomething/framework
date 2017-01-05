@@ -22,13 +22,4 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase
     {
         return $this->kernel;
     }
-
-    public function __destruct()
-    {
-        if (!$this->load) {
-            throw new \PHPUnit_Framework_IncompleteTestError(
-                "Please run parent::setUp()."
-            );
-        }
-    }
 }
