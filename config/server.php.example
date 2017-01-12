@@ -10,7 +10,9 @@ return [
     'host' => '0.0.0.0',
     'port' => '9501',
     'daemonize' => false,
-//    'pid_file' => dirname(__DIR__)."/var/locks/server.pid",
+    'pid_file' => dirname(__DIR__)."/var/locks/server.pid",
+    'server' => "FSth\\Framework\\Server\\HttpServer",
+    'protocol' => "FSth\\Framework\\Server\\Protocol",
     'setting' => [
         'max_connection' => 101,       //worker process num
         'worker_num' => 8,       //worker process num
