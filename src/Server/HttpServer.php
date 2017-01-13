@@ -51,7 +51,7 @@ class HttpServer
     {
         $this->kernel = $kernel;
         $this->config = $kernel->config('server');
-        $this->setting = $this->config['setting'] + $this->setting;
+        $this->setting = $this->setting + $this->config['setting'];
     }
 
     public function setOptions($options)
