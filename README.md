@@ -29,3 +29,8 @@ remove plumber
 move bin/server to src/Context/server 
 make server & protcol Alternatively
 ```
+
+### 2017-01-13 v0.1.2
+```
+fix setting 
+```
