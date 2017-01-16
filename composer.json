@@ -7,6 +7,7 @@
       "FSth\\Framework\\Test\\": "tests"
     }
   },
+  "license": "MIT",
   "authors": [
     {
       "name": "qiqisan",
