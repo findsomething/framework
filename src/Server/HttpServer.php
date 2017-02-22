@@ -51,12 +51,12 @@ class HttpServer
     {
         $this->kernel = $kernel;
         $this->config = $kernel->config('server');
-        $this->setting = $this->config['setting'] + $this->setting;
+        $this->setting = array_merge($this->setting, $this->config['setting']);
     }
 
     public function setOptions($options)
     {
-        $this->setting = $options + $this->setting;
+        $this->setting = array_merge($this->setting, $options);
     }
 
     public function daemonize()
@@ -78,6 +78,8 @@ class HttpServer
     {
         register_shutdown_function(array($this, 'handleFatal'));
 
+        var_dump($this->setting);
+
         $this->server->set($this->setting);
         $this->init();
         $this->bind();
@@ -88,7 +90,7 @@ class HttpServer
     public function onServerStart($serv)
     {
         $this->logger->info("Server start on {$this->host}:{$this->port}, pid {$serv->master_pid}");
-        if (!empty($this->config['pid_file'])) {
+        if ($this->config['daemonize'] && !empty($this->config['pid_file'])) {
             file_put_contents($this->config['pid_file'], $serv->master_pid);
         }
     }
