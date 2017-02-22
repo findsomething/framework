@@ -18,6 +18,11 @@ ab -n 10000 -c 500 http://127.0.0.1:9502/  for access phalcon directly
 
 ## changelog 
 
+### 2017-01-17 v0.1.3
+```
+fix autoload
+```
+
 ### 2017-02-22 v0.1.4
 ```
 fix setting
