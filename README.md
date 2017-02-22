@@ -18,19 +18,7 @@ ab -n 10000 -c 500 http://127.0.0.1:9502/  for access phalcon directly
 
 ## changelog 
 
-### 2017-01-05 v0.1.0
+### 2017-02-22 v0.1.4
 ```
-init
-```
-
-### 2017-01-12 v0.1.1
-```
-remove plumber
-move bin/server to src/Context/server 
-make server & protcol Alternatively
-```
-
-### 2017-01-13 v0.1.2
-```
-fix setting 
+fix setting
 ```

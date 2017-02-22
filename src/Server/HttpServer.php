@@ -78,8 +78,6 @@ class HttpServer
     {
         register_shutdown_function(array($this, 'handleFatal'));
 
-        var_dump($this->setting);
-
         $this->server->set($this->setting);
         $this->init();
         $this->bind();
