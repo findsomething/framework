@@ -14,3 +14,13 @@ make server & protcol Alternatively
 ```
 fix setting 
 ```
+
+### 2017-01-17 v0.1.3
+```
+fix autoload
+```
+
+### 2017-02-22 v0.1.4
+```
+fix setting
+```
