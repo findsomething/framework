@@ -8,6 +8,8 @@
 namespace FSth\Framework\Context;
 
 use Doctrine\DBAL\DriverManager;
+use FSth\Framework\Server\Pack\Handler;
+use FSth\Framework\Server\Pack\Packer;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Pimple\Container;
@@ -44,10 +46,16 @@ class Kernel extends Container
     {
         $this['logger'] = function ($kernel) {
             $logger = new Logger('run');
-            $logger->pushHandler(new StreamHandler($this->config['log_path'].'run.log'));
+            $logger->pushHandler(new StreamHandler($this->config['log_path'] . 'run.log'));
             return $logger;
         };
-        
+
         $this['namespace'] = $this->config['namespace'];
+
+        $this['packer'] = function ($kernel) {
+            $packer = new Packer();
+            $packer->setPackerHandler(new Handler());
+            return $packer;
+        };
     }
 }

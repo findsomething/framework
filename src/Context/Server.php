@@ -64,6 +64,9 @@ class Server
         $serverConfig = $kernel->config('server');
 
         $server = new $this->config['server']($serverConfig['host'], $serverConfig['port']);
+        if (!empty($serverConfig['tcpSetting']) && !empty($serverConfig['tcpPort']) && method_exists($server, 'setTcp')) {
+            $server->setTcp($serverConfig['tcpPort'], $serverConfig['tcpSetting']);
+        }
         $server->setKernel($kernel);
         $server->setProtocol($protocol);
         $server->setLogger($kernel['logger']);

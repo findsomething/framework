@@ -53,6 +53,11 @@ class Protocol
         $this->handle = new Phalcon($kernel);
     }
 
+    public function onReceive(\swoole_server $server, $fd, $fromId, $data)
+    {
+        $server->send($fd, $data);
+    }
+
     protected function setOptions($options)
     {
         $this->setting = $options;
@@ -89,7 +94,7 @@ class Protocol
 
         $_GET['_url'] = $_SERVER['REQUEST_URI'] = $req->server['request_uri'];
         $_SERVER['REQUEST_METHOD'] = $req->server['request_method'];
-        
+
         return true;
     }
 }

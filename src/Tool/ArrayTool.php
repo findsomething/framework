@@ -102,15 +102,15 @@ class ArrayTool
             }
 
             if (is_array($value)) {
-                $filtered[$key] = (array) $array[$key];
+                $filtered[$key] = (array)$array[$key];
             } elseif (is_int($value)) {
-                $filtered[$key] = (int) $array[$key];
+                $filtered[$key] = (int)$array[$key];
             } elseif (is_float($value)) {
-                $filtered[$key] = (float) $array[$key];
+                $filtered[$key] = (float)$array[$key];
             } elseif (is_bool($value)) {
-                $filtered[$key] = (bool) $array[$key];
+                $filtered[$key] = (bool)$array[$key];
             } else {
-                $filtered[$key] = (string) $array[$key];
+                $filtered[$key] = (string)$array[$key];
             }
 
             if (empty($filtered[$key])) {
@@ -119,5 +119,21 @@ class ArrayTool
         }
 
         return $filtered;
+    }
+
+    public static function toString($value)
+    {
+        if (is_array($value)) {
+            return json_encode($value);
+        }
+        return $value;
+    }
+
+    public static function toArray($value)
+    {
+        if (is_array($value)) {
+            return $value;
+        }
+        return json_decode($value, true);
     }
 }
