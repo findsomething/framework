@@ -1,12 +1,12 @@
 # a frame work combine swoole & phalcon
 
 ## usage
-   
+
+composer require fsth/framework dev-master
+
 bin/server start config/server.php 
 
 wget http://127.0.0.1:9501 
-
-look the demo for detail
 
 ## benchmark
 
