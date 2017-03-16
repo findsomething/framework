@@ -2,11 +2,11 @@
 
 ## usage
    
-php bin/server start config/server.php 
+bin/server start config/server.php 
 
 wget http://127.0.0.1:9501 
 
-see the demo for detail
+look the demo for detail
 
 ## benchmark
 
