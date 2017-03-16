@@ -6,7 +6,7 @@ interface PackerInterface
 {
     function setPackerHandler($handler);
 
-    function encode(array $data);
+    function encode($data);
 
     function decode($string);
 }

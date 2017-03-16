@@ -12,7 +12,7 @@ class Packer implements PackerInterface
         $this->handler = $handler;
     }
 
-    public function encode(array $data)
+    public function encode($data)
     {
         // TODO: Implement encode() method.
         return $this->handler->encode($data);

@@ -3,7 +3,7 @@
 class ClientTest extends \FSth\Framework\UnitTest\UnitTestCase
 {
     private $host = '127.0.0.1';
-    private $port = '9502';
+    private $port = '9504';
 
     private $client;
 

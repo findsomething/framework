@@ -16,7 +16,7 @@ class Handler implements HandlerInterface
         $this->salt = $salt;
     }
 
-    public function encode(array $data)
+    public function encode($data)
     {
         // TODO: Implement encode() method.
         $encode = serialize($data);
