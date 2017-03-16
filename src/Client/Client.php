@@ -24,16 +24,19 @@ class Client
         'socket_buffer_size' => 1024 * 1024 * 4,
     ];
 
-    public function __construct($host, $port)
+    public function __construct($host, $port, $options = [])
     {
         $this->client = new \swoole_client(SWOOLE_SOCK_TCP | SWOOLE_KEEP);
-        $this->client->set($this->setting);
         $this->host = $host;
         $this->port = $port;
+
+        $this->setting = $this->setting + $options;
     }
 
     public function connect()
     {
+        $this->client->set($this->setting);
+
         $connected = $this->client->connect($this->host, $this->port, self::RECEIVE_TIMEOUT);
         if (!$connected) {
             $this->triggerError();
