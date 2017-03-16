@@ -9,18 +9,25 @@ return [
     'bootstrap' => dirname(__DIR__). "/bootstrap/bootstrap-test.php",
     'host' => '0.0.0.0',
     'port' => '9501',
+    'tcpPort' => '9502',
     'daemonize' => false,
     'pid_file' => dirname(__DIR__)."/var/locks/server.pid",
-    'server' => "FSth\\Framework\\Server\\HttpServer",
+    'server' => "FSth\\Framework\\Server\\MultiServer",
     'protocol' => "FSth\\Framework\\Server\\Protocol",
     'setting' => [
         'max_connection' => 101,       //worker process num
         'worker_num' => 8,       //worker process num
-        'max_request' => 10000,
+        'max_request' => 0,
         'backlog' => 128,        //listen backlog
         'open_tcp_keepalive' => 1,
         'heartbeat_check_interval' => 5,
         'heartbeat_idle_time' => 10,
         'http_parse_post' => false,
+    ],
+    'tcpSetting' => [
+        //'open_length_check' => 1,
+        //'package_length_type' => 'N',
+        //'package_length_offset' => 0,
+        //'package_body_offset' => 4,
     ]
 ];
