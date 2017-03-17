@@ -59,11 +59,7 @@ class Handler implements HandlerInterface
 
         $target = substr($string, 40);
 
-        if ($salt != $this->salt) {
-            $this->triggerError("packer salt invalid", 100001);
-        }
-
-        if (pack("N", crc32($target . $this->salt)) != $sign) {
+        if (pack("N", crc32($target . $salt)) != $sign) {
             $this->triggerError("packer sign invalid", 100001);
         }
 
