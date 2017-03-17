@@ -4,7 +4,7 @@ namespace FSth\Framework\Server;
 
 class MultiServer extends HttpServer
 {
-    protected $tcpServer;
+    protected $tcpServer = null;
 
     protected $setting = [
         'max_connection' => 100,       //worker process num
@@ -51,7 +51,7 @@ class MultiServer extends HttpServer
     protected function bind()
     {
         parent::bind();
-        if (method_exists($this->protocol, 'onReceive')) {
+        if (method_exists($this->protocol, 'onReceive') && $this->tcpServer) {
             $this->tcpServer->on('Receive', [$this->protocol, 'onReceive']);
         }
     }
@@ -61,7 +61,10 @@ class MultiServer extends HttpServer
         register_shutdown_function(array($this, 'handleFatal'));
 
         $this->server->set($this->setting);
-        $this->tcpServer->set($this->tcpSetting);
+        if (!empty($this->tcpServer)) {
+            $this->tcpServer->set($this->tcpSetting);
+        }
+
 
         $this->init();
         $this->bind();
