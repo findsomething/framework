@@ -9,6 +9,7 @@ return [
     'bootstrap' => dirname(__DIR__). "/bootstrap/bootstrap-test.php",
     'host' => '0.0.0.0',
     'port' => '9501',
+    'tcpPort' => '9502',
     'daemonize' => false,
     'pid_file' => dirname(__DIR__)."/var/locks/server.pid",
     'server' => "FSth\\Framework\\Server\\MultiServer",
@@ -22,5 +23,11 @@ return [
         'heartbeat_check_interval' => 5,
         'heartbeat_idle_time' => 10,
         'http_parse_post' => false,
+    ],
+    'tcpSetting' => [
+        'open_length_check' => 1,
+        'package_length_type' => 'N',
+        'package_length_offset' => 0,
+        'package_body_offset' => 4,
     ]
 ];

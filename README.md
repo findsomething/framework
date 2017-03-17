@@ -1,12 +1,23 @@
 # a frame work combine swoole & phalcon
 
+## install
+```
+composer require fsth/framework dev-master
+```
+
 ## usage
 
-composer require fsth/framework dev-master
-
+### start server (http only)
+```
+cp config/server.php.example config/server.php
 bin/server start config/server.php 
+```
 
-wget http://127.0.0.1:9501 
+### start server (http & tcp)
+```
+cp config/multi-server.php.example config/multi-server.php
+bin/server start config/multi-server.php
+```
 
 ## benchmark
 
