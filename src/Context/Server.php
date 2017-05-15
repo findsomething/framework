@@ -19,7 +19,7 @@ class Server
     public function __construct($params)
     {
         $this->params = $params;
-        $this->validMethod = array('start', 'stop');
+        $this->validMethod = array('run', 'start', 'stop', 'restart');
     }
 
     public function handle()
@@ -49,13 +49,18 @@ class Server
         $this->config = include $configFile;
     }
 
-    private function start()
+    private function run()
+    {
+        $this->start(false);
+    }
+
+    private function start($daemon = true)
     {
         if (file_exists($this->config['pid_file'])) {
             echo "server is already start \n";
             return;
         }
-        echo "server is starting...";
+        echo "server is starting...\n";
         $kernel = include $this->config['bootstrap'];
         $kernel->setConfig('server', $this->config);
 
@@ -72,9 +77,11 @@ class Server
         $server->setProtocol($protocol);
         $server->setLogger($kernel['logger']);
 
-        if ($serverConfig['daemonize']) {
+        if ($daemon) {
             $server->daemonize();
         }
+
+        echo "server {$serverConfig['host']}:{$serverConfig['port']} started.\n";
 
         $server->listen();
     }
@@ -90,15 +97,22 @@ class Server
                         continue;
                     }
 
-                    echo "server stop\n";
+                    echo "server has stopped.\n";
                     break;
                 }
             }
         }
     }
 
+    private function restart()
+    {
+        $this->stop();
+        sleep(1);
+        $this->start(true);
+    }
+
     private function show()
     {
-        echo "Usage: php {$this->params[0]} start|stop pathToConfig\n";
+        echo "Usage: php {$this->params[0]} run|start|stop|restart pathToConfig\n";
     }
 }

@@ -88,7 +88,7 @@ class HttpServer
     public function onServerStart($serv)
     {
         $this->logger->info("Server start on {$this->host}:{$this->port}, pid {$serv->master_pid}");
-        if ($this->config['daemonize'] && !empty($this->config['pid_file'])) {
+        if (!empty($this->setting['daemonize']) && !empty($this->config['pid_file'])) {
             file_put_contents($this->config['pid_file'], $serv->master_pid);
         }
     }

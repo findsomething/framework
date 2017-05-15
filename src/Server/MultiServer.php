@@ -65,7 +65,6 @@ class MultiServer extends HttpServer
             $this->tcpServer->set($this->tcpSetting);
         }
 
-
         $this->init();
         $this->bind();
 
