@@ -7,6 +7,15 @@ composer require fsth/framework dev-master
 
 ## usage
 
+### method
+```
+bin/server run|start|stop|restart config/server.php
+```
+```
+run : run without daemon
+start : run with daemon
+```
+
 ### start server (http only)
 ```
 cp config/server.php.example config/server.php
@@ -52,3 +61,7 @@ fix setting
 add tcp service in multiServer
 ```
 
+### 2017-05-15 v0.2.0
+```
+add bin/server cmd
+```
