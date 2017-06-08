@@ -104,7 +104,7 @@ class HttpServer
     public function handleFatal()
     {
         $error = error_get_last();
-        $this->logger->error('fatalError', $error);
+        $this->logger->error('fatalError', ['error' => $error]);
     }
 
     protected function init()
