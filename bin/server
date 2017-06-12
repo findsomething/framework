@@ -13,7 +13,12 @@ if (!$autoloader()) {
     die('class autoloader not found.');
 }
 
-Env::init();
+$envFile = dirname(__DIR__).".env";
+if(file_exists($envFile)){
+    $dotenv = new \Dotenv\Dotenv(dirname(__DIR__));
+    $dotenv->load();
+    Env::init();
+}
 
 $server = new \FSth\Framework\Context\Server($argv);
 $server->handle();

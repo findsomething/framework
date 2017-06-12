@@ -22,7 +22,8 @@
     "doctrine/dbal": ">=2.5.5",
     "fsth/redis-client": ">=0.1.2",
     "codeages/beanstalk-client": ">=0.1.3",
-    "oscarotero/env": ">=1.0.2"
+    "oscarotero/env": ">=1.0.2",
+    "vlucas/phpdotenv": ">=2.4.0"
   },
   "bin": ["bin/server"]
 }

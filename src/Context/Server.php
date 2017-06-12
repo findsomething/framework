@@ -28,11 +28,6 @@ class Server
         call_user_func_array(array($this, $this->method), array());
     }
 
-    protected function beforeInit()
-    {
-
-    }
-
     private function init()
     {
         if (count($this->params) != 3) {
@@ -50,9 +45,7 @@ class Server
             $this->method = "show";
             return;
         }
-
-        $this->beforeInit();
-
+        
         $this->config = include $configFile;
     }
 
