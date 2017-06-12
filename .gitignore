@@ -7,5 +7,6 @@
 /phpunit.xml
 /phinx.php
 !/bin/server
+!/bin/redisPool
 !/var/logs/.gitkeep
 /.idea

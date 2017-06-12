@@ -7,54 +7,9 @@
  */
 namespace FSth\Framework\Context;
 
-class Server
+class Server extends Boot
 {
-    private $params;
-
-    private $method;
-    private $config;
-
-    private $validMethod;
-
-    public function __construct($params)
-    {
-        $this->params = $params;
-        $this->validMethod = array('run', 'start', 'stop', 'restart');
-    }
-
-    public function handle()
-    {
-        $this->init();
-        call_user_func_array(array($this, $this->method), array());
-    }
-
-    private function init()
-    {
-        if (count($this->params) != 3) {
-            $this->method = "show";
-            return;
-        }
-        $this->method = $this->params[1];
-        if (!in_array($this->method, $this->validMethod)) {
-            $this->method = "show";
-            return;
-        }
-
-        $configFile = $this->params[2];
-        if (!file_exists($configFile)) {
-            $this->method = "show";
-            return;
-        }
-
-        $this->config = include $configFile;
-    }
-
-    private function run()
-    {
-        $this->start(false);
-    }
-
-    private function start($daemon = true)
+    function start($daemon = true)
     {
         if (file_exists($this->config['pid_file'])) {
             echo "server is already start \n";
@@ -86,7 +41,7 @@ class Server
         $server->listen();
     }
 
-    private function stop()
+    function stop()
     {
         if (file_exists($this->config['pid_file'])) {
             $pid = intval(file_get_contents($this->config['pid_file']));
@@ -102,17 +57,5 @@ class Server
                 }
             }
         }
-    }
-
-    private function restart()
-    {
-        $this->stop();
-        sleep(1);
-        $this->start(true);
-    }
-
-    private function show()
-    {
-        echo "Usage: php {$this->params[0]} run|start|stop|restart pathToConfig\n";
     }
 }
