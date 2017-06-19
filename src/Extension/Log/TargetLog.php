@@ -12,6 +12,9 @@ abstract class TargetLog
     protected $targetType;
     protected $targetId;
 
+    protected $message;
+    protected $content;
+
     protected $allowLevel = [
         'emergency',
         'alert',
@@ -62,7 +65,7 @@ abstract class TargetLog
     {
         // TODO: Implement __call() method.
         $this->check($name, $arguments);
-        $this->save($this->toArray($name, $arguments['message'], $arguments['content']));
+        $this->save($this->toArray($name, $this->message, $this->content));
     }
 
     protected function toArray($level, $message, $content)
@@ -93,10 +96,20 @@ abstract class TargetLog
         if (!in_array(strtolower($name), $this->allowLevel)) {
             throw new FsException("未允许日志类型");
         }
-        if (!is_array($argument) || ArrayTool::requireds($argument, ['message', 'content']) ||
-            !is_array($argument['content'])
-        ) {
+
+        if (empty($argument) || !is_array($argument)) {
             throw new FsException("未允许日志参数");
+        }
+
+        $count = count($argument);
+        $this->message = ArrayTool::toString($argument[0]);
+        if ($count >= 2) {
+            $this->content = $argument[1];
+            if (!is_array($this->content)) {
+                throw new FsException("日志参数不正确");
+            }
+        } else {
+            $this->content = [];
         }
     }
 }
