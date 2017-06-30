@@ -7,6 +7,7 @@
  */
 namespace FSth\Framework\Server;
 
+use FSth\Framework\Tool\StandardTool;
 use Phalcon\Di\FactoryDefault;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Micro;
@@ -25,14 +26,19 @@ class Phalcon
     protected $workerId = 0;
     protected $di;
     protected $server;
-    protected $header = array();
+    protected $header = [];
     protected $raw = "";
 
-    public function __construct($kernel)
+    protected $binds = [
+        'before' => 'onBefore',
+        'notFound' => 'onNotFound'
+    ];
+
+    public function __construct($kernel, $addErrorTrigger = false)
     {
         $this->kernel = $kernel;
-        $this->route = array();
-        if($kernel->config('route_file') && file_exists($kernel->config('route_file'))){
+        $this->route = [];
+        if ($kernel->config('route_file') && file_exists($kernel->config('route_file'))) {
             $this->route = include $kernel->config('route_file');
         }
         $this->namespace = $kernel['namespace'];
@@ -41,6 +47,11 @@ class Phalcon
         $this->mount = new Mount($this->app);
 
         $this->logger = $kernel['logger'];
+
+        if ($addErrorTrigger) {
+            $this->binds['error'] = 'onError';
+        }
+
         $this->init();
     }
 
@@ -71,43 +82,48 @@ class Phalcon
         $this->mount->setPath($this->namespace . 'Controller');
         $this->mount->mount($this->route);
 
-        $this->app->get('/', function () {
+        $this->app->get('/', $this->helloWorld());
+
+        foreach ($this->binds as $key => $method) {
+            $this->app->$key($this->$method());
+        }
+    }
+
+    protected function helloWorld()
+    {
+        return function () {
             $response = new Response();
             $response->setStatusCode(200);
 
             return $response->setJsonContent(array(
                 'hello' => 'world'
             ));
-        });
-
-        $this->app->before(function () {
-        });
-
-
-        $this->app->error(function (\Exception $e) {
-            $response = new Response();
-            $response->setStatusCode(200);
-            $traceId = time() . '_' . substr(hash('md5', uniqid('', true)), 0, 10);
-
-            return $response->setJsonContent(array(
-                'error' => array(
-                    'code' => $e->getCode(),
-                    'message' => $e->getMessage(),
-                    'trace_id' => $traceId
-                )
-            ));
-        });
-
-        $this->app->notFound(function () {
-            $response = new Response();
-            $response->setStatusCode(200);
-
-            return $response->setJsonContent(array(
-                'error' => array(
-                    'message' => 'not found',
-                )
-            ));
-        });
+        };
     }
 
+    protected function onBefore()
+    {
+        return function () {
+        };
+    }
+
+    protected function onError()
+    {
+        return function (\Exception $e) {
+            $response = new Response();
+            $response->setStatusCode(200);
+
+            return $response->setJsonContent(StandardTool::toError($e->getMessage(), $e->getCode()));
+        };
+    }
+
+    protected function onNotFound()
+    {
+        return function () {
+            $response = new Response();
+            $response->setStatusCode(500);
+
+            return $response->setJsonContent(StandardTool::toError("Route not found", 0));
+        };
+    }
 }

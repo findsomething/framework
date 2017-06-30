@@ -7,6 +7,7 @@
  */
 namespace FSth\Framework\Server;
 
+use FSth\Framework\Tool\StandardTool;
 use Phalcon\Mvc\Micro;
 use FSth\Framework\Tool\ParseRaw;
 
@@ -42,7 +43,8 @@ class Protocol
             $res->status(200);
             $res->end($result);
         } catch (\Exception $e) {
-            $res->end($e->getMessage());
+            $error = StandardTool::toError($e->getMessage(), $e->getCode());
+            $res->end(json_encode($error));
         }
     }
 
