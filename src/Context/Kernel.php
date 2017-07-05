@@ -21,7 +21,7 @@ class Kernel extends Container
 
     protected $cache_db;
     protected $cache_redis;
-
+    
     public function __construct($config)
     {
         $this->config = $config;

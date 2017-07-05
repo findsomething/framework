@@ -9,4 +9,11 @@ return [
     'log_path' => dirname(__DIR__)."/var/logs/",
     'namespace' => 'FSth\\Framework\\Test\\',
     'route_file' => dirname(__DIR__) . '/config/route.php',
+    'trace' => [
+        'setting' => [
+            'logger_type' => 'http',
+            'host' => 'http://127.0.0.1:9411',
+        ],
+        'execute' => true,
+    ],
 ];

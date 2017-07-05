@@ -8,15 +8,12 @@ use FSth\Framework\Tool\Parser;
 use FSth\Framework\Tool\Format;
 use FSth\Framework\Exception\FsException;
 
-class SYarClient
+class SYarClient extends BaseClient
 {
     const RECEIVE_TIMEOUT = 10;
 
     const CONNECT_ERROR = 2;
     const RECEIVE_ERROR = 3;
-
-    protected $host;
-    protected $port;
 
     protected $client;
 
@@ -62,6 +59,10 @@ class SYarClient
     {
         // TODO: Implement __call() method.
         try {
+            $this->arguments = !empty($arguments) ? $arguments : [];
+            $this->name = $name;
+
+            $this->beforeCall();
             if (empty($this->client) || $this->client->isConnected() === false) {
                 $this->tcpConnect();
             }
@@ -76,6 +77,8 @@ class SYarClient
                 $this->tcpClose();
             }
             throw new FsException($e->getMessage(), $e->getCode());
+        } finally {
+            $this->afterCall();
         }
     }
 

@@ -7,7 +7,10 @@
  */
 namespace FSth\Framework\Server;
 
+use FSth\Framework\Context\Context;
+use FSth\Framework\Extension\ZipKin\RequestKin;
 use FSth\Framework\Tool\StandardTool;
+use Phalcon\Http\Response;
 use Phalcon\Mvc\Micro;
 use FSth\Framework\Tool\ParseRaw;
 
@@ -18,6 +21,8 @@ class Protocol
     protected $kernel;
     protected $handle;
     protected $server;
+
+    protected $context;
 
     public function __construct($kernel)
     {
@@ -31,20 +36,27 @@ class Protocol
             $res->end();
             return;
         }
+        $this->beforeRequest($req, $res);
 
         $this->makeup($req);
 
         try {
             ob_start();
-            $this->handle->handle();
-            $result = ob_get_contents();
+            $response = $this->handle->handle();
             ob_end_clean();
 
-            $res->status(200);
-            $res->end($result);
+            if ($response instanceof Response) {
+                $res->status(200);
+                $res->end($response->getContent());
+            } else {
+                throw new \Exception("unexpected response");
+            }
+
         } catch (\Exception $e) {
             $error = StandardTool::toError($e->getMessage(), $e->getCode());
             $res->end(json_encode($error));
+        } finally {
+            $this->afterRequest($req, $res);
         }
     }
 
@@ -58,6 +70,48 @@ class Protocol
     public function onReceive(\swoole_server $server, $fd, $fromId, $data)
     {
         $server->send($fd, $data);
+    }
+
+    protected function beforeRequest(\swoole_http_request $req, \swoole_http_response $res)
+    {
+        $this->context = new Context();
+        $traceConfig = $this->kernel->config('trace');
+        if (empty($traceConfig['execute']) || !$traceConfig['execute']) {
+            return false;
+        }
+        $serverConfig = $this->kernel->config('server');
+        $serverName = !empty($serverConfig['name']) ? $serverConfig['name'] : "test";
+        $requestKin = new RequestKin($serverName, $serverConfig['host'], $serverConfig['port'], $traceConfig['setting']);
+        $requestKin->setRequestServer($req->server);
+        $tracer = $requestKin->getTracer();
+
+        $this->context->traceId = $requestKin->getTraceId();
+        $this->context->traceSpanId = $requestKin->getTraceSpanId();
+        $this->context->sampled = $requestKin->getSampled();
+        $this->context->tracer = $tracer;
+
+        $GLOBALS['context'] = $this->context;
+    }
+
+    protected function afterRequest(\swoole_http_request $req, \swoole_http_response $res)
+    {
+        $traceConfig = $this->kernel->config('trace');
+        if (!$traceConfig['execute']) {
+            return false;
+        }
+        $tracer = $GLOBALS['context']->tracer;
+        $tracer->trace();
+        unset($GLOBALS['context']);
+    }
+
+    protected function beforeReceive(\swoole_server $server, $fd, $fromId, $data)
+    {
+
+    }
+
+    protected function afterReceive(\swoole_server $server, $fd, $fromId, $data)
+    {
+
     }
 
     protected function setOptions($options)
