@@ -13,6 +13,7 @@ use FSth\Framework\Tool\StandardTool;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Micro;
 use FSth\Framework\Tool\ParseRaw;
+use whitemerry\phpkin\Tracer;
 
 class Protocol
 {
@@ -96,11 +97,13 @@ class Protocol
     protected function afterRequest(\swoole_http_request $req, \swoole_http_response $res)
     {
         $traceConfig = $this->kernel->config('trace');
-        if (!$traceConfig['execute']) {
+        if (empty($traceConfig['execute'])) {
             return false;
         }
         $tracer = $GLOBALS['context']->tracer;
-        $tracer->trace();
+        if ($tracer instanceof Tracer) {
+            $tracer->trace();
+        }
         unset($GLOBALS['context']);
     }
 
