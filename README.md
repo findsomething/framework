@@ -46,11 +46,6 @@ bin/server start config/multi-server.php
 
 ## changelog 
 
-### 2017-01-17 v0.1.3
-```
-fix autoload
-```
-
 ### 2017-02-22 v0.1.4
 ```
 fix setting
@@ -64,4 +59,9 @@ add tcp service in multiServer
 ### 2017-05-15 v0.2.0
 ```
 add bin/server cmd
+```
+
+### 2017-07-06
+```
+add zipKin support
 ```
