@@ -51,7 +51,8 @@ class ClientKin
         $this->port = $port;
         $this->changeToIp();
         $zipKin = new ZipKin($serverName, $this->ip, $this->port);
-        $this->parser->tracer = $zipKin->createSpan($functionName, $this->spanId, $this->requestStart);
+        $span = $zipKin->createSpan($functionName, $this->spanId, $this->requestStart);
+        $this->parser->tracer->addSpan($span);
     }
 
     public function getTracer()

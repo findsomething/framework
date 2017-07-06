@@ -36,6 +36,6 @@ class ParserKin
         if (!($this->context instanceof Context)) {
             return false;
         }
-
+        return true;
     }
 }

@@ -9,6 +9,7 @@ class BaseClient
     protected $arguments;
     protected $name;
     protected $serverName;
+    protected $service;
 
     protected $host;
     protected $port;
@@ -25,7 +26,7 @@ class BaseClient
         $context = !empty($GLOBALS['context']) ? $GLOBALS['context'] : null;
         $this->clientKin = new ClientKin($context);
         if ($this->clientKin->needTrace()) {
-            $this->arguments['traceHeader'] = $this->clientKin->traceHeader();
+            array_push($this->arguments, ['traceHeader' => $this->clientKin->traceHeader()]);
         }
 
     }
@@ -33,7 +34,7 @@ class BaseClient
     protected function afterCall()
     {
         if ($this->clientKin->needTrace()) {
-            $this->clientKin->addSpan($this->serverName, $this->host, $this->port, $this->name);
+            $this->clientKin->addSpan($this->serverName, $this->host, $this->port, $this->service . "_" . $this->name);
             $GLOBALS['context']->tracer = $this->clientKin->getTracer();
         }
     }
