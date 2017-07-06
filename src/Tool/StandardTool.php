@@ -17,4 +17,9 @@ class StandardTool
             ]
         ];
     }
+
+    public static function toSpanName($service, $method)
+    {
+        return sprintf("%s_%s", $service, $method);
+    }
 }

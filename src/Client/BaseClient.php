@@ -3,6 +3,7 @@
 namespace FSth\Framework\Client;
 
 use FSth\Framework\Extension\ZipKin\ClientKin;
+use FSth\Framework\Tool\StandardTool;
 
 class BaseClient
 {
@@ -33,8 +34,10 @@ class BaseClient
 
     protected function afterCall()
     {
+
         if ($this->clientKin->needTrace()) {
-            $this->clientKin->addSpan($this->serverName, $this->host, $this->port, $this->service . "_" . $this->name);
+            $this->clientKin->addSpan($this->serverName, $this->host, $this->port,
+                StandardTool::toSpanName($this->service, $this->name));
             $GLOBALS['context']->tracer = $this->clientKin->getTracer();
         }
     }
