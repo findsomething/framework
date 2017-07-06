@@ -82,16 +82,9 @@ class Protocol
         }
         $serverConfig = $this->kernel->config('server');
         $serverName = !empty($serverConfig['name']) ? $serverConfig['name'] : "test";
-        $requestKin = new RequestKin($serverName, $serverConfig['host'], $serverConfig['port'], $traceConfig['setting']);
-        $requestKin->setRequestServer($req->server);
-        $tracer = $requestKin->getTracer();
 
-        $this->context->traceId = $requestKin->getTraceId();
-        $this->context->traceSpanId = $requestKin->getTraceSpanId();
-        $this->context->sampled = $requestKin->getSampled();
-        $this->context->tracer = $tracer;
-
-        $GLOBALS['context'] = $this->context;
+        $this->initTrace($serverName, $serverConfig['host'], $serverConfig['port'], $traceConfig['setting'],
+            $req->server);
     }
 
     protected function afterRequest(\swoole_http_request $req, \swoole_http_response $res)
@@ -117,6 +110,21 @@ class Protocol
 
     }
 
+    protected function initTrace($serverName, $host, $port, $setting, $traceHeader)
+    {
+        $requestKin = new RequestKin($serverName, $host, $port, $setting);
+
+        $requestKin->setRequestServer($traceHeader);
+        $tracer = $requestKin->getTracer();
+
+        $this->context->traceId = $requestKin->getTraceId();
+        $this->context->traceSpanId = $requestKin->getTraceSpanId();
+        $this->context->sampled = $requestKin->getSampled();
+        $this->context->tracer = $tracer;
+
+        $GLOBALS['context'] = $this->context;
+    }
+
     protected function setOptions($options)
     {
         $this->setting = $options;
@@ -133,7 +141,6 @@ class Protocol
         $_GET = $_POST = $_COOKIE = $_SERVER = array();
         $this->handle->setHeader(array());
         $this->handle->setRaw("");
-
         $_SERVER = $req->server;
 
         if ($req->server['request_method'] == 'POST') {
@@ -146,14 +153,12 @@ class Protocol
         if (!empty($req->get)) {
             $_GET = $req->get;
         }
-
         if (!empty($req->header)) {
             $this->handle->setHeader($req->header);
         }
-
         $_GET['_url'] = $_SERVER['REQUEST_URI'] = $req->server['request_uri'];
         $_SERVER['REQUEST_METHOD'] = $req->server['request_method'];
-
+        
         return true;
     }
 }
