@@ -32,7 +32,7 @@ class BaseClient
 
     protected function afterCall()
     {
-        if ($this->clientKin->needTracer()) {
+        if ($this->clientKin->needTrace()) {
             $this->clientKin->addSpan($this->serverName, $this->host, $this->port, $this->name);
             $GLOBALS['context']->tracer = $this->clientKin->getTracer();
         }

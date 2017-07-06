@@ -50,11 +50,6 @@ class ClientKin
         $this->ip = $host;
         $this->port = $port;
         $this->changeToIp();
-        while (1) {
-            if (filter_var($this->ip, FILTER_VALIDATE_IP) || empty($this->ip)) {
-                break;
-            }
-        }
         $zipKin = new ZipKin($serverName, $this->ip, $this->port);
         $this->parser->tracer = $zipKin->createSpan($functionName, $this->spanId, $this->requestStart);
     }
@@ -66,11 +61,8 @@ class ClientKin
 
     protected function changeToIp()
     {
-        $checkHost = $this->ip;
-        if (filter_var($checkHost, FILTER_VALIDATE_IP) === false) {
-            swoole_async_dns_lookup($checkHost, function ($host, $ip) {
-                $this->ip = $ip;
-            });
+        if (filter_var($this->ip, FILTER_VALIDATE_IP) === false) {
+            $this->ip = '127.0.0.1';
         }
     }
 }
