@@ -86,9 +86,9 @@ class RequestKin
 
     protected function resetWithTrace()
     {
-        $this->traceId = TracerInfo::getTraceId();
-        $this->traceSpanId = TracerInfo::getTraceSpanId();
-        $this->isSampled = TracerInfo::isSampled();
+        $this->traceId = (string)TracerInfo::getTraceId();
+        $this->traceSpanId = (string)TracerInfo::getTraceSpanId();
+        $this->isSampled = (bool)TracerInfo::isSampled();
     }
 
 }
