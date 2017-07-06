@@ -2,6 +2,7 @@
 
 namespace FSth\Framework\Extension\ZipKin;
 
+use whitemerry\phpkin\Logger\FileLogger;
 use whitemerry\phpkin\Logger\SimpleHttpLogger;
 use whitemerry\phpkin\TracerInfo;
 
@@ -26,8 +27,10 @@ class RequestKin
      * @param $host
      * @param $port
      * @param $config
-     *  logger_type http
+     *  logger_type http/file
      *  host
+     *  file_path
+     *  file_name
      */
     public function __construct($serverName, $host, $port, $config)
     {
@@ -80,6 +83,11 @@ class RequestKin
             $this->traceLogger = new SimpleHttpLogger([
                 'host' => $this->config['host'],
                 'muteErrors' => false,
+            ]);
+        } else if ($this->config['logger_type'] == 'file') {
+            $this->traceLogger = new FileLogger([
+                'path' => $this->config['file_path'],
+                'fileName' => !empty($this->config['file_name']) ? $this->config['file_name'] : 'zipkin.log'
             ]);
         }
     }
