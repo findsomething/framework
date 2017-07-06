@@ -89,15 +89,7 @@ class Protocol
 
     protected function afterRequest(\swoole_http_request $req, \swoole_http_response $res)
     {
-        $traceConfig = $this->kernel->config('trace');
-        if (empty($traceConfig['execute'])) {
-            return false;
-        }
-        $tracer = $GLOBALS['context']->tracer;
-        if ($tracer instanceof Tracer) {
-            $tracer->trace();
-        }
-        unset($GLOBALS['context']);
+        $this->handleAfter();
     }
 
     protected function beforeReceive(\swoole_server $server, $fd, $fromId, $data)
@@ -108,6 +100,29 @@ class Protocol
     protected function afterReceive(\swoole_server $server, $fd, $fromId, $data)
     {
 
+    }
+
+    protected function handleAfter()
+    {
+        $traceConfig = $this->kernel->config('trace');
+        if (empty($traceConfig['execute'])) {
+            return false;
+        }
+        if (empty($GLOBALS['context']) || !($GLOBALS['context'] instanceof Context)) {
+            return false;
+        }
+        $tracer = $GLOBALS['context']->tracer;
+        if ($tracer instanceof Tracer) {
+            try {
+                $tracer->trace();
+            } catch (\Exception $e) {
+                $this->logger->error('trace error', [
+                    'error' => $e->getMessage(),
+                    'code' => $e->getCode()
+                ]);
+            }
+        }
+        unset($GLOBALS['context']);
     }
 
     protected function initTrace($serverName, $host, $port, $setting, $traceHeader)
@@ -158,7 +173,7 @@ class Protocol
         }
         $_GET['_url'] = $_SERVER['REQUEST_URI'] = $req->server['request_uri'];
         $_SERVER['REQUEST_METHOD'] = $req->server['request_method'];
-        
+
         return true;
     }
 }

@@ -14,7 +14,7 @@ class YarClient extends BaseClient
         $this->initHostAndPort();
     }
 
-    public function setOpt($name, $value)
+    public function SetOpt($name, $value)
     {
         $this->client->SetOpt($name, $value);
     }

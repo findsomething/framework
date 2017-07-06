@@ -13,6 +13,9 @@ class YarClientTest extends \FSth\Framework\UnitTest\UnitTestCase
     {
         $client = new \FSth\Framework\Client\YarClient($this->url . "?service=TestService");
         $client->setServerName("testClient");
+        $client->SetOpt(YAR_OPT_TIMEOUT, empty($config['timeout']) ? 5000 : $config['timeout']);
+        $client->SetOpt(YAR_OPT_PACKAGER, empty($config['packager']) ? 'php' : $config['packager']);
+        $client->SetOpt(YAR_OPT_CONNECT_TIMEOUT, empty($config['connectTimeout']) ? 2000 : $config['connectTimeout']);
         $params = array('hello' => 'world');
 
         $result = $client->giveBack($params);
