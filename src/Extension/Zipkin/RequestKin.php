@@ -3,6 +3,7 @@
 namespace FSth\Framework\Extension\ZipKin;
 
 use whitemerry\phpkin\Logger\SimpleHttpLogger;
+use whitemerry\phpkin\TracerInfo;
 
 class RequestKin
 {
@@ -54,6 +55,7 @@ class RequestKin
     public function getTracer()
     {
         $tracer = $this->server->createTracer($this->uri, false);
+        $this->resetWithTrace();
         return $tracer;
     }
 
@@ -80,6 +82,13 @@ class RequestKin
                 'muteErrors' => false,
             ]);
         }
+    }
+
+    protected function resetWithTrace()
+    {
+        $this->traceId = TracerInfo::getTraceId();
+        $this->traceSpanId = TracerInfo::getTraceSpanId();
+        $this->isSampled = TracerInfo::isSampled();
     }
 
 }

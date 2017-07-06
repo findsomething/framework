@@ -38,7 +38,7 @@ class ClientKin
             return [];
         }
         return [
-            'x-b3-traceid' => $this->parser->tracerId,
+            'x-b3-traceid' => $this->parser->traceId,
             'x-b3-spanid' => ((string)$this->spanId),
             'x-b3-parentspanid' => $this->parser->traceSpanId,
             'x-b3-sampled' => ((int)$this->parser->sampled)

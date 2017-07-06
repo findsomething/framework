@@ -8,7 +8,7 @@ use whitemerry\phpkin\Tracer;
 class ParserKin
 {
     public $tracer;
-    public $tracerId;
+    public $traceId;
     public $traceSpanId;
     public $sampled;
 
@@ -23,7 +23,7 @@ class ParserKin
     {
         if ($this->valid() && $this->context->tracer instanceof Tracer) {
             $this->tracer = $this->context->tracer;
-            $this->tracerId = $this->context->tracerId;
+            $this->traceId = $this->context->traceId;
             $this->traceSpanId = $this->context->traceSpanId;
             $this->sampled = $this->context->sampled;
             return true;
