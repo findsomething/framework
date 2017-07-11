@@ -6,18 +6,20 @@ use FSth\Framework\Extension\ZipKin\RequestKin;
 use FSth\Framework\Context\Context;
 use whitemerry\phpkin\Tracer;
 
-class ZipKin
+class ZipKinTool
 {
     /**
      * @param $serverConfig
      *  host
      *  port
-     *  serverName
+     *  name
      * @param $traceConfig
-     *  logger_type
-     *  host
-     *  file_path
-     *  file_name
+     *  execute
+     *  setting
+     *   logger_type
+     *   host
+     *   file_path
+     *   file_name
      * @param $traceHeader
      *  request_uri
      *  http_x_b3_traceid
@@ -30,9 +32,10 @@ class ZipKin
         if (empty($traceConfig['execute']) || !$traceConfig['execute']) {
             return false;
         }
+        $serverName = !empty($serverConfig['name']) ? $serverConfig['name'] : "test";
         $context = new Context();
-        $requestKin = new RequestKin($serverConfig['serverName'], $serverConfig['host'], $serverConfig['port'],
-            $traceConfig);
+        $requestKin = new RequestKin($serverName, $serverConfig['host'], $serverConfig['port'],
+            $traceConfig['setting']);
         $requestKin->setRequestServer($traceHeader);
         $tracer = $requestKin->getTracer();
 
@@ -41,15 +44,18 @@ class ZipKin
         $context->sampled = $requestKin->getSampled();
         $context->tracer = $tracer;
 
-        $GLOBALS['content'] = $context;
+        $GLOBALS['context'] = $context;
+
     }
 
     /**
      * @param $traceConfig
-     *  logger_type
-     *  host
-     *  file_path
-     *  file_name
+     *  execute
+     *  setting
+     *   logger_type
+     *   host
+     *   file_path
+     *   file_name
      * @return bool
      */
     public static function afterExecute($traceConfig)
@@ -70,13 +76,15 @@ class ZipKin
 
     /**
      * @param $traceConfig
-     *  logger_type
-     *  host
-     *  file_path
-     *  file_name
+     *  execute
+     *  setting
+     *   logger_type
+     *   host
+     *   file_path
+     *   file_name
      * @return array|bool
      */
-    public function getTraceHeader($traceConfig)
+    public static function getTraceHeader($traceConfig)
     {
         if (empty($traceConfig['execute'])) {
             return false;
@@ -89,5 +97,10 @@ class ZipKin
             'http_x_b3_spanid' => $GLOBALS['context']->traceSpanId,
             'http_x_b3_sampled' => $GLOBALS['context']->sampled,
         ];
+    }
+
+    public static function toSpanName($service, $method)
+    {
+        return sprintf("%s_%s", $service, $method);
     }
 }
