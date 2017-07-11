@@ -2,6 +2,8 @@
 
 namespace FSth\Framework\Extension\ZipKin;
 
+use whitemerry\phpkin\Identifier\SpanIdentifier;
+use whitemerry\phpkin\Identifier\TraceIdentifier;
 use whitemerry\phpkin\Logger\FileLogger;
 use whitemerry\phpkin\Logger\SimpleHttpLogger;
 use whitemerry\phpkin\TracerInfo;
@@ -44,10 +46,11 @@ class RequestKin
 
     public function setRequestServer($requestServer)
     {
+
         $this->traceId = !empty($requestServer['http_x_b3_traceid']) ?
-            $requestServer['http_x_b3_traceid'] : null;
+            new TraceIdentifier($requestServer['http_x_b3_traceid']) : null;
         $this->traceSpanId = !empty($requestServer['http_x_b3_spanid']) ?
-            $requestServer['http_x_b3_spanid'] : null;
+            new SpanIdentifier($requestServer['http_x_b3_spanid']) : null;
         $this->isSampled = !empty($requestServer['http_x_b3_sampled']) ? false : true;
 
         $this->server->setBackEndParams($this->traceId, $this->traceSpanId, $this->isSampled);
