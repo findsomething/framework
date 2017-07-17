@@ -25,13 +25,19 @@ class ZipKinTool
      *  http_x_b3_traceid
      *  http_x_b3_spanid
      *  http_x_b3_sampled
-     * @return Context|bool
+     * @return array
+     *  Context
+     *  bool
      */
     public static function beforeExecute($serverConfig, $traceConfig, $traceHeader)
     {
         if (empty($traceConfig['execute']) || !$traceConfig['execute']) {
-            return false;
+            return [null, false];
         }
+        if (!empty($GLOBALS['context']) && $GLOBALS['context'] instanceof Context) {
+            return [null, false];
+        }
+
         $serverName = !empty($serverConfig['name']) ? $serverConfig['name'] : "test";
         $context = new Context();
         $requestKin = new RequestKin($serverName, $serverConfig['host'], $serverConfig['port'],
@@ -46,6 +52,8 @@ class ZipKinTool
 
         $GLOBALS['context'] = $context;
 
+        return [$context, true];
+
     }
 
     /**
@@ -56,11 +64,12 @@ class ZipKinTool
      *   host
      *   file_path
      *   file_name
+     * @param $needTrace
      * @return bool
      */
-    public static function afterExecute($traceConfig)
+    public static function afterExecute($traceConfig, $needTrace = true)
     {
-        if (empty($traceConfig['execute'])) {
+        if (!$needTrace || empty($traceConfig['execute'])) {
             return false;
         }
         if (empty($GLOBALS['context']) || !($GLOBALS['context'] instanceof Context)) {
