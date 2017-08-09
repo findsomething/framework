@@ -7,8 +7,6 @@
  */
 namespace FSth\Framework\Dao;
 
-use Doctrine\DBAL\Query\QueryBuilder;
-
 class DynamicQueryBuilder extends QueryBuilder
 {
     protected $conditions;
