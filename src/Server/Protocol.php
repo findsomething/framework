@@ -53,9 +53,14 @@ class Protocol
                 throw new \Exception("unexpected response");
             }
 
+        } catch (\Throwable $e) {
+            $error = StandardTool::toError($e->getMessage(), $e->getCode());
+            $res->end(json_encode($error));
+
         } catch (\Exception $e) {
             $error = StandardTool::toError($e->getMessage(), $e->getCode());
             $res->end(json_encode($error));
+            
         } finally {
             $this->afterRequest($req, $res);
         }
