@@ -12,8 +12,8 @@ class SYarClient extends BaseClient
 {
     const RECEIVE_TIMEOUT = 10;
 
-    const CONNECT_ERROR = 2;
-    const RECEIVE_ERROR = 3;
+    const CONNECT_ERROR = 60001;
+    const RECEIVE_ERROR = 60002;
 
     protected $client;
 
@@ -22,9 +22,12 @@ class SYarClient extends BaseClient
 
     protected $service;
 
+    protected $options;
+
     protected $packer;
     protected $parser;
     protected $timeout;
+    protected $keepLive;
 
     protected $setting = [
         'open_length_check' => 1,
@@ -36,21 +39,13 @@ class SYarClient extends BaseClient
         'socket_buffer_size' => 1024 * 1024 * 4,
     ];
 
-    public function __construct($host, $port, $service, $options = [])
+    public function __construct($host, $port, $service, $options = [], $keepLive = false)
     {
-        $this->client = new \swoole_client(SWOOLE_SOCK_TCP | SWOOLE_KEEP);
-        $this->setting = $this->setting + $options;
-        $this->service = $service;
-        $this->client->set($this->setting);
-
-        $this->packer = new Packer();
-        $this->packer->setPackerHandler(new Handler());
-        $this->parser = new Parser();
-
         $this->host = $host;
         $this->port = $port;
-
-        $this->timeout = self::RECEIVE_TIMEOUT;
+        $this->service = $service;
+        $this->options = $options;
+        $this->keepLive = $keepLive;
 
         $this->tcpConnect();
     }
@@ -63,8 +58,10 @@ class SYarClient extends BaseClient
             $this->name = $name;
 
             $this->beforeCall();
-            if (empty($this->client) || $this->client->isConnected() === false) {
-                $this->tcpConnect();
+            if (empty($this->client) || !($this->client instanceof \swoole_client) ||
+                $this->client->isConnected() === false
+            ) {
+                $this->reconnectTcpConnet();
             }
             $ret = $this->client->send($this->packer->encode(Format::client($this->service, $name, $arguments)));
             $this->checkTcpSendResult($ret);
@@ -73,7 +70,9 @@ class SYarClient extends BaseClient
             $result = $this->packer->decode($receive);
             return $this->parser->parse($result['data']);
         } catch (\Exception $e) {
-            if (($e->getCode() == 2 || $e->getCode() == 3) && strpos($e->getMessage(), 'Broken pipe') !== false) {
+            if (($e->getCode() == self::CONNECT_ERROR || $e->getCode() == self::RECEIVE_ERROR) ||
+                strpos($e->getMessage(), 'Broken pipe') !== false
+            ) {
                 $this->tcpClose();
             }
             throw new FsException($e->getMessage(), $e->getCode());
@@ -87,15 +86,44 @@ class SYarClient extends BaseClient
         $this->timeout = $timeout;
     }
 
+    public function tcpClose()
+    {
+        try {
+            if (!empty($this->client) && $this->client instanceof \swoole_client) {
+                $this->client->close(true);
+            }
+        } catch (\Exception $e) {
+
+        } finally {
+            unset($this->client);
+            $this->client = null;
+        }
+    }
+
+    private function tcpConnect()
+    {
+        $socketType = $this->keepLive ? (SWOOLE_TCP | SWOOLE_KEEP) : SWOOLE_TCP;
+        $this->client = new \swoole_client($socketType);
+        $this->setting = $this->setting + $this->options;
+        $this->client->set($this->setting);
+
+        $this->packer = new Packer();
+        $this->packer->setPackerHandler(new Handler());
+        $this->parser = new Parser();
+
+        $this->timeout = self::RECEIVE_TIMEOUT;
+
+        $connected = $this->client->connect($this->host, $this->port, $this->timeout);
+        $this->checkTcpSendResult($connected);
+    }
+
     private function waitTcpResult()
     {
-        while (1) {
-            $result = $this->client->recv();
-            if ($result !== false && $result != "") {
-                return $result;
-            }
-            throw new FsException("receive time out", self::RECEIVE_ERROR);
+        if (false === ($result = $this->client->recv())) {
+            throw new FsException("receive time out. code:" . $this->client->errCode . " msg:" .
+                \socket_strerror($this->client->errCode), self::RECEIVE_ERROR);
         }
+        return $result;
     }
 
     private function checkTcpSendResult($ret)
@@ -110,20 +138,9 @@ class SYarClient extends BaseClient
         throw new FsException($msg, self::CONNECT_ERROR);
     }
 
-    private function tcpClose()
+    private function reconnectTcpConnet()
     {
-        try {
-            $this->client->close(true);
-        } catch (\Exception $e) {
-
-        } finally {
-            $this->client = null;
-        }
-    }
-
-    private function tcpConnect()
-    {
-        $connected = $this->client->connect($this->host, $this->port, $this->timeout);
-        $this->checkTcpSendResult($connected);
+        $this->tcpClose();
+        $this->tcpConnect();
     }
 }
